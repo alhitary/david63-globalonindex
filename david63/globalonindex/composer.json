@@ -1,0 +1,38 @@
+{
+	"name": "david63/globalonindex",
+	"type": "phpbb-extension",
+	"description": "Displays announcements on the index page.",
+	"homepage": "",
+	"version": "1.0.0-b1",
+	"time": "2015-01-05",
+		"keywords": ["phpbb", "extension", "global", "announcement"],
+	"license": "GPL-2.0",
+	"authors": [{
+			"name": "David Wood",
+			"username": "david63",
+			"email": "david@webworld.xyz",
+			"homepage": "http://webworld.xyz",
+			"role": "Mod convertor"
+			},
+			{
+			"name": "Steve",
+			"username": "vectra-mods",
+			"email": "noreply@phpbbstylesandgraphics.com",
+			"homepage": "http://www.phpbbandbbcodes.com/index.php",
+			"role": "Mod developer"
+		}],
+	"require": {
+		"php": ">=5.3.3"
+	},
+	"extra": {
+		"display-name": "Announcements on index",
+		"soft-require": {
+			"phpbb/phpbb": ">=3.1.2,<3.2.*@dev"
+      },
+		"version-check": {
+				"host": "webworld.xyz",
+			"directory": "/versioncheck",
+			"filename": "globalonindex_versions.json"
+		}
+	}
+}

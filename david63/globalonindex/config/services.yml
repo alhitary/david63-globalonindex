@@ -1,0 +1,13 @@
+services:
+    david63.globalonindex.listener:
+        class: david63\globalonindex\event\listener
+        arguments:
+            - @config
+            - @template
+            - @user
+            - @dbal.conn
+            - %core.root_path%
+            - %core.php_ext%
+            - @service_container
+        tags:
+            - { name: event.listener }
