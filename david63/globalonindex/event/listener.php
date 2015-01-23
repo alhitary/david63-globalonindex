@@ -48,7 +48,7 @@ class listener implements EventSubscriberInterface
 	* @param \phpbb\db\driver\driver_interface $db
 	* @access public
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\template\twig\twig $template, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $root_path, $php_ext, $phpbb_container)
+	public function __construct(\phpbb\config\config $config, \phpbb\template\twig\twig $template, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $root_path, $php_ext, $phpbb_container, \phpbb\auth\auth $auth, $cache)
 	{
 		$this->config			= $config;
 		$this->template			= $template;
@@ -57,6 +57,8 @@ class listener implements EventSubscriberInterface
 		$this->root_path		= $root_path;
 		$this->phpEx			= $php_ext;
 		$this->phpbb_container	= $phpbb_container;
+		$this->auth				= $auth;
+		$this->cache			= $cache;
 	}
 
 	/**
@@ -91,10 +93,8 @@ class listener implements EventSubscriberInterface
 	*/
 	public function add_global_to_index($event)
 	{
-		if ($this->config['global_on_index'])
+		if ($this->config['global_on_index'] && ($this->config['global_announce_index'] || $this->config['global_announce_announce']))
 		{
-			global $auth, $cache;
-
 			$phpbb_content_visibility = $this->phpbb_container->get('content.visibility');
 
 			$sql_from	= TOPICS_TABLE . ' t ';
@@ -115,7 +115,7 @@ class listener implements EventSubscriberInterface
 			}
 
 			// Get cleaned up list... return only those forums not having the f_read permission
-			$forum_ary = $auth->acl_getf('!f_read', true);
+			$forum_ary = $this->auth->acl_getf('!f_read', true);
 			$forum_ary = array_unique(array_keys($forum_ary));
 
 			// Determine first forum the user is able to read into - for global announcement link
@@ -133,7 +133,7 @@ class listener implements EventSubscriberInterface
 			$g_forum_id = (int) $this->db->sql_fetchfield('forum_id');
 			$this->db->sql_freeresult($result);
 
-			if ($g_forum_id && ($this->config['global_announce_index'] || $this->config['global_announce_announce']))
+			if ($g_forum_id)
 			{
 				$topic_list = $rowset = array();
 				$sql_where = POST_GLOBAL;
@@ -182,7 +182,7 @@ class listener implements EventSubscriberInterface
 					$unread_topic = (isset($topic_tracking_info[$topic_id]) && $row['topic_last_post_time'] > $topic_tracking_info[$topic_id]) ? true : false;
 
             		// Grab icons
-            		$icons = $cache->obtain_icons();
+            		$icons = $this->cache->obtain_icons();
 
 					$folder_img = 'icon ';
 
