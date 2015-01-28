@@ -1,13 +1,13 @@
 <?php
 /**
 *
-* @package Global announcement on index
+* @package Announcements on index
 * @copyright (c) 2015 david63
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
 
-namespace david63\globalonindex\event;
+namespace david63\announceonindex\event;
 
 /**
 * @ignore
@@ -71,8 +71,8 @@ class listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.index_modify_page_title'		=> 'add_global_to_index',
-			'core.page_header_after'			=> 'add_to_header',
+			'core.index_modify_page_title'	=> 'add_announcements_to_index',
+			'core.page_header_after'		=> 'add_to_header',
 		);
 	}
 
@@ -80,20 +80,19 @@ class listener implements EventSubscriberInterface
 	public function add_to_header($event)
 	{
 		$this->template->assign_vars(array(
-				'S_ALLOW_GUESTS' 		=> ($this->config['global_announce_guest']) ? true : false,
-				'S_ANNOUNCE_ENABLED'	=> ($this->config['global_on_index']) ? true : false,
+				'S_ALLOW_GUESTS' 		=> ($this->config['announce_guest']) ? true : false,
+				'S_ANNOUNCE_ENABLED'	=> ($this->config['announce_on_index_enable']) ? true : false,
 		));
 	}
-
 
 	/**
 	* @param object $event The event object
 	* @return null
 	* @access public
 	*/
-	public function add_global_to_index($event)
+	public function add_announcements_to_index($event)
 	{
-		if ($this->config['global_on_index'] && ($this->config['global_announce_index'] || $this->config['global_announce_announce']))
+		if ($this->config['announce_on_index_enable'] && ($this->config['announce_global_on_index'] || $this->config['announce_announcement_on_index']))
 		{
 			$phpbb_content_visibility = $this->phpbb_container->get('content.visibility');
 
@@ -138,12 +137,12 @@ class listener implements EventSubscriberInterface
 				$topic_list = $rowset = array();
 				$sql_where = POST_GLOBAL;
 
-				if ($this->config['global_announce_announce'])
+				if ($this->config['announce_announcement_on_index'])
 				{
 					$sql_where = POST_ANNOUNCE;
 				}
 
-				if ($this->config['global_announce_index'] && $this->config['global_announce_announce'])
+				if ($this->config['announce_global_on_index'] && $this->config['announce_announcement_on_index'])
 				{
 					$sql_where = POST_ANNOUNCE . ' OR t.topic_type =  ' . POST_GLOBAL;
 				}
@@ -195,46 +194,27 @@ class listener implements EventSubscriberInterface
 					}
 
 					$this->template->assign_block_vars('topicrow', array(
-						'FIRST_POST_TIME'			=> $this->user->format_date($row['topic_time']),
-						'LAST_POST_TIME'			=> $this->user->format_date($row['topic_last_post_time']),
-						'LAST_POST_AUTHOR'			=> get_username_string('username', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
-						'LAST_POST_AUTHOR_FULL'		=> get_username_string('full', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
-						'TOPIC_TITLE'				=> censor_text($row['topic_title']),
+						'FIRST_POST_TIME'		=> $this->user->format_date($row['topic_time']),
+						'LAST_POST_TIME'		=> $this->user->format_date($row['topic_last_post_time']),
+						'LAST_POST_AUTHOR'		=> get_username_string('username', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
+						'LAST_POST_AUTHOR_FULL'	=> get_username_string('full', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
+						'TOPIC_TITLE'			=> censor_text($row['topic_title']),
 
-	               		'REPLIES'			        => $phpbb_content_visibility->get_count('topic_posts', $row, $forum_id) - 1,
-	            		'VIEWS'				        => $this->user->lang($row['topic_views']),
-						'TOPIC_AUTHOR_FULL'			=> get_username_string('full', $row['topic_poster'], $row['topic_first_poster_name'], $row['topic_first_poster_colour']),
-		        		'TOPIC_LAST_AUTHOR'         => get_username_string('full', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
-						'TOPIC_FOLDER_IMG'			=> $this->user->img($folder_img, $folder_alt),
-                		'TOPIC_ICON_IMG'			=> (!empty($icons[$row['icon_id']])) ? $icons[$row['icon_id']]['img'] : '',
-						'TOPIC_IMG_STYLE'			=> 'icon ' . $folder_img,
+	               		'REPLIES'				=> $phpbb_content_visibility->get_count('topic_posts', $row, $forum_id) - 1,
+	            		'VIEWS'					=> $this->user->lang($row['topic_views']),
+						'TOPIC_AUTHOR_FULL'		=> get_username_string('full', $row['topic_poster'], $row['topic_first_poster_name'], $row['topic_first_poster_colour']),
+		        		'TOPIC_LAST_AUTHOR'		=> get_username_string('full', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
+						'TOPIC_FOLDER_IMG'		=> $this->user->img($folder_img, $folder_alt),
+                		'TOPIC_ICON_IMG'		=> (!empty($icons[$row['icon_id']])) ? $icons[$row['icon_id']]['img'] : '',
+						'TOPIC_IMG_STYLE'		=> 'icon ' . $folder_img,
 
-						'S_ALLOW_EVENTS'			=> ($this->config['global_announce_event']) ? true : false,
-						'S_UNREAD'					=> $unread_topic,
+						'S_ALLOW_EVENTS'		=> ($this->config['announce_event']) ? true : false,
+						'S_UNREAD'				=> $unread_topic,
 
-						'U_LAST_POST'				=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id&amp;p=" . $row['topic_last_post_id']) . '#p' . $row['topic_last_post_id'],
-						'U_NEWEST_POST'				=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id&amp;view=unread") . '#unread',
-						'U_VIEW_TOPIC'				=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id"),
-
-
-						//'FORUM_ID'					=> $forum_id,
-						//'TOPIC_ID'					=> $topic_id,
-						//'TOPIC_AUTHOR'				=> get_username_string('username', $row['topic_poster'], $row['topic_first_poster_name'], $row['topic_first_poster_colour']),
-						//'TOPIC_AUTHOR_COLOUR'		=> get_username_string('colour', $row['topic_poster'], $row['topic_first_poster_name'], $row['topic_first_poster_colour']),
-						//'LAST_POST_SUBJECT'			=> censor_text($row['topic_last_post_subject']),
-						//'LAST_VIEW_TIME'			=> $this->user->format_date($row['topic_last_view_time']),
-						//'LAST_POST_AUTHOR_COLOUR'	=> get_username_string('colour', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
-						//'TOPIC_TYPE'				=> $this->user->lang['VIEW_TOPIC_GLOBAL'],
-                		//'TOPIC_LINK'                => append_sid("{$this->root_path}viewtopic.$this->phpEx", 'f=' . $row['forum_id'] . '&amp;t=' . $row['topic_id']),
-						//'TOPIC_FOLDER_IMG_SRC'		=> $this->user->img($folder_img, $folder_alt, false, '', 'src'),
-						//'TOPIC_ICON_IMG_WIDTH' 		=> (!empty($icons[$row['icon_id']])) ? $icons[$row['icon_id']]['width'] : '',
-			    		//'TOPIC_ICON_IMG_HEIGHT'		=> (!empty($icons[$row['icon_id']])) ? $icons[$row['icon_id']]['height'] : '',
-						//'S_USER_POSTED'				=> (!empty($row['topic_posted']) && $row['topic_posted']) ? true : false,
-						//'U_TOPIC_AUTHOR'			=> get_username_string('profile', $row['topic_poster'], $row['topic_first_poster_name'], $row['topic_first_poster_colour']),
-						//'U_LAST_POST_AUTHOR'		=> get_username_string('profile', $row['topic_last_poster_id'], $row['topic_last_poster_name'], $row['topic_last_poster_colour']),
-
-
-						));
+						'U_LAST_POST'			=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id&amp;p=" . $row['topic_last_post_id']) . '#p' . $row['topic_last_post_id'],
+						'U_NEWEST_POST'			=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id&amp;view=unread") . '#unread',
+						'U_VIEW_TOPIC'			=> append_sid("{$this->root_path}viewtopic.$this->phpEx", "f=$g_forum_id&amp;t=$topic_id"),
+					));
 				}
 			}
 		}
