@@ -3,7 +3,7 @@
 <h1>{L_ANNOUNCE_ON_INDEX}</h1>
 <p>{L_ANNOUNCE_ON_INDEX_EXPLAIN}</p>
 
-<form id="sitelogo" method="post" action="{U_ACTION}">
+<form id="announceonindex" method="post" action="{U_ACTION}">
 
 	<fieldset>
 		<legend>{L_ANNOUNCE_ON_INDEX_OPTIONS}</legend>
@@ -15,9 +15,9 @@
 		</dl>
 
 		<dl>
-			<dt><label for="global_announce_index">{L_SHOW_GLOBALS}{L_COLON}</label><br /><span>{L_SHOW_GLOBALS_EXPLAIN}</span></dt>
-			<dd><label><input type="radio" class="radio" name="global_announce_index" value="1" id="global_announce_index"<!-- IF SHOW_GLOBALS --> checked="checked"<!-- ENDIF -->/> {L_YES}</label>
-				<label><input type="radio" class="radio" name="global_announce_index" value="0" <!-- IF not SHOW_GLOBALS --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			<dt><label for="announce_global_on_index">{L_SHOW_GLOBALS}{L_COLON}</label><br /><span>{L_SHOW_GLOBALS_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="announce_global_on_index" value="1" id="announce_global_on_index"<!-- IF SHOW_GLOBALS --> checked="checked"<!-- ENDIF -->/> {L_YES}</label>
+				<label><input type="radio" class="radio" name="announce_global_on_index" value="0" <!-- IF not SHOW_GLOBALS --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 		</dl>
 
 		<dl>
@@ -27,9 +27,9 @@
 		</dl>
 
 		<dl>
-			<dt><label for="announce_event">{L_ALLOW_GUESTS}{L_COLON}</label><br /><span>{L_ALLOW_GUESTS_EXPLAIN}</span></dt>
-			<dd><label><input type="radio" class="radio" name="announce_event" value="1" id="announce_event"<!-- IF ALLOW_GUESTS --> checked="checked"<!-- ENDIF -->/> {L_YES}</label>
-				<label><input type="radio" class="radio" name="announce_event" value="0" <!-- IF not ALLOW_GUESTS --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			<dt><label for="announce_guest">{L_ALLOW_GUESTS}{L_COLON}</label><br /><span>{L_ALLOW_GUESTS_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="announce_guest" value="1" id="announce_guest"<!-- IF ALLOW_GUESTS --> checked="checked"<!-- ENDIF -->/> {L_YES}</label>
+				<label><input type="radio" class="radio" name="announce_guest" value="0" <!-- IF not ALLOW_GUESTS --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 		</dl>
 
 		<dl>

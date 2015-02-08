@@ -51,7 +51,7 @@ class announceonindex_module
 			$this->config->set('announce_event', $this->request->variable('announce_event', 0));
 			$this->config->set('announce_global_on_index', $this->request->variable('announce_global_on_index', 0));
 			$this->config->set('announce_guest', $this->request->variable('announce_guest', 0));
-			$this->config->set('announce_on_index_enable', $this->request->variable('announce_on_index_enable', ''));
+			$this->config->set('announce_on_index_enable', $this->request->variable('announce_on_index_enable', 0));
 
 			$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'GLOBAL_ON_INDEX_LOG');
 			trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));

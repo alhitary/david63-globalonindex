@@ -3,7 +3,7 @@
 	"type": "phpbb-extension",
 	"description": "Displays announcements on the index page.",
 	"homepage": "",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"time": "2015-01-05",
 	"keywords": ["phpbb", "extension", "global", "announcement", "index"],
 	"license": "GPL-2.0",
@@ -22,7 +22,7 @@
 			"role": "Mod developer"
 		}],
 	"require": {
-        "php": ">=5.3",
+        "php": ">=5.3.3",
         "composer/installers": "~1.0"
     },
 	"extra": {
