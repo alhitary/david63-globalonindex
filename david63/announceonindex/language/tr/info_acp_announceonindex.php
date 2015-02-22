@@ -50,5 +50,3 @@ $lang = array_merge($lang, array(
 	'SHOW_GLOBALS'					=> 'Genel duyuruları göster',
 	'SHOW_GLOBALS_EXPLAIN'			=> 'Tüm genel duyuruları anasayfada gösterir.',
 ));
-
-?>
