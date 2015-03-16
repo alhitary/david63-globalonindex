@@ -37,18 +37,31 @@ class listener implements EventSubscriberInterface
 	/** @var string PHP extension */
 	protected $phpEx;
 
-	protected $phpbb_container;
+	/** @var ContainerInterface */
+	protected $container;
+
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
+	/** @var \phpbb\cache\service */
+	protected $cache;
 
 	/**
 	* Constructor for listener
 	*
-	* @param \phpbb\config\config		$config		Config object
-	* @param \phpbb\template\twig\twig	$template	Template object
-	* @param \phpbb\user                $user		User object
-	* @param \phpbb\db\driver\driver_interface $db
+	* @param \phpbb\config\config				$config		Config object
+	* @param \phpbb\template\twig\twig			$template	Template object
+	* @param \phpbb\user                		$user		User object
+	* @param \phpbb\db\driver\driver_interface	$db
+	* @param string 							$root_path
+	* @param string 							$php_ext
+	* @param ContainerInterface					$container	Service container interface
+	* @param \phpbb\auth\auth 					$auth
+	* @param \phpbb\cache\service				$cache
+
 	* @access public
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\template\twig\twig $template, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $root_path, $php_ext, $phpbb_container, \phpbb\auth\auth $auth, $cache)
+	public function __construct(\phpbb\config\config $config, \phpbb\template\twig\twig $template, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $root_path, $php_ext, $phpbb_container, \phpbb\auth\auth $auth, \phpbb\cache\service $cache)
 	{
 		$this->config			= $config;
 		$this->template			= $template;
@@ -76,7 +89,6 @@ class listener implements EventSubscriberInterface
 		);
 	}
 
-
 	public function add_to_header($event)
 	{
 		$this->template->assign_vars(array(
@@ -102,14 +114,14 @@ class listener implements EventSubscriberInterface
 			if ($this->config['load_db_track'])
 			{
 				$sql_from .= ' LEFT JOIN ' . TOPICS_POSTED_TABLE . ' tp ON (tp.topic_id = t.topic_id
-					AND tp.user_id = ' . $this->user->data['user_id'] . ')';
+					AND tp.user_id = ' . (int) $this->user->data['user_id'] . ')';
 				$sql_select .= ', tp.topic_posted';
 			}
 
 			if ($this->config['load_db_lastread'])
 			{
 				$sql_from .= ' LEFT JOIN ' . TOPICS_TRACK_TABLE . ' tt ON (tt.topic_id = t.topic_id
-					AND tt.user_id = ' . $this->user->data['user_id'] . ')';
+					AND tt.user_id = ' . (int) $this->user->data['user_id'] . ')';
 				$sql_select .= ', tt.mark_time';
 			}
 
